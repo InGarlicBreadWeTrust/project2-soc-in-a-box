@@ -1,0 +1,41 @@
+# config/ics-sigma/ICS-DNP3-Invalid-Sequence-Number.yml
+# Source: co-op-authored, built on the open-source ICS detection-rule community
+# (ISC dnp3-zeek, ICS-Security-Tools, marlinspike). Reuse requires attribution to the
+# upstream DRL/CC license. License (DRL at build time): Apache-2.0 / CC-BY / MIT (set COOP_DRL).
+
+title: DNP3 Invalid or Out-of-Sequence Link-Layer Sequence Number
+id: C-OT-DNP3-0001
+status: experimental
+description: >
+  A DNP3 control frame carrying a link-layer sequence number outside the expected window, or a
+  sequence that is not monotonically increasing, may indicate a MITM/replay/in-flight injection
+  or a mis-synchronized master/outstation. Alert when the sequence number deviates from the
+  running expectation by more than a configured tolerance.
+references:
+   - https://www.ics-security.org
+   - https://github.com/ISC/ICS-Security-Tools
+   - https://github.com/ISC/dnp3-zeek           # verify exact path before relying on it
+author: co-op SOC-in-a-Box project (InGarlicBreadWeTrust)
+license: Apache-2.0
+date: 2026-10-28
+tags:
+   - attack.command_and_control
+   - attack.t0898                     # MITRE lateral movement / C2
+   - detection.ics.ot
+   - detection.protocol_anomaly
+   - protocol.dnp3
+logsource:
+  product: ics_sensor                 # co-op ICS sensor output (modbus/dnp3/iec61850)
+  service: ics_control
+  category: ics_control
+detection:
+  selection_proto:
+      protocol: 'dnp3'
+  selection_drift:
+      seq_drift:
+        - '> 2'                        # sequence drift beyond tolerance
+        - out_of_window: true
+  unexpected_master:
+      master_id: '<expected_master>'   # COOP fills per-outstation
+condition: selection_proto and (selection_drift or unexpected_master)
+level: high

@@ -1,0 +1,25 @@
+# config/loki/loki-config.yml — Loki log store. LOCAL-ONLY, single-host co-op use.
+#
+# Invariant (sec-verify check A): NO remote_write / external endpoint. AGPL-3.0 is fine for
+# internal single-host use — do NOT offer a modified Loki as a networked service to 3rd parties.
+# This is a minimal single-host config; co-op may add retention as disk allows.
+server:
+  http_listen_port: 3100          # loopback-bound in deploy; see systemd unit
+  grpc_listen_port: 9095
+listen_local: true                # bind loopback only by default in single-host mode
+
+# ---- No remote storage / no remote_write / no external object store --------------------
+storage:
+  boltdb-shipper:
+    active_index_directory: /var/lib/loki/active-index
+    cache_location: /var/lib/loki/cache
+# local boltdb only; NO aws/gcp/azure, NO s3, NO gcs.
+# (a co-op on bare disk: boltdb-shipper is fine. Do NOT add an S3/GCS backend for a no-call-home box.)
+
+limits_config:
+  per_stream_rate_limit: 15mb
+  per_stream_rate_limit_burst: 30mb
+# long-term retention is local disk; co-op sets retention_* to its disk budget
+  retention_period: 168h          # local; adjust to disk budget
+
+# >>>>>>> NO remote_write, NO external provider, NO s3/gcs.  <<<<<<<<

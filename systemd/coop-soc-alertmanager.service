@@ -1,0 +1,36 @@
+# systemd/coop-soc-alertmanager.service — the "brain" that routes alerts to the co-op owner.
+#
+# Passes HIGH-confidence ICS control-plane detections to a co-op-owned pager/SMS/email via
+# Alertmanager; dedup + rate-limit + escalate. Self-healing, sandboxed, local-endpoints only.
+
+[Unit]
+Description=Co-op SOC-in-a-Box alert router (co-op-owned recipient, local endpoint)
+After=coop-soc-collector.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/alertmanager  --config.file=/etc/coop-soc/alertmanager.yml  --web.listen-address=127.0.0.1:9093
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=60
+
+--- Least privilege / sandbox ---
+User=coopsoc
+Group=coopsoc
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelModules=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+MemoryDenyWriteExecute=true
+# Alertmanager listens on LOOPBACK only; the co-op front-ends it with a local HTTPS proxy if it
+# needs browser access. Recipients in the config are co-op-owned on-prem endpoints only.
+
+[Install]
+WantedBy=multi-user.target

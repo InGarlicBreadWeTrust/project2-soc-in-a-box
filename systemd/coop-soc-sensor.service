@@ -1,0 +1,39 @@
+# systemd/coop-soc-sensor.service — per-VLAN passive ICS sensor (self-healing template).
+#
+# One instance per segmented ICS VLAN the co-op monitors. The co-op clones this per VLAN
+# (e.g. /etc/systemd/system/coop-soc-sensor-vlan3001.service ...), each a systemd override unit
+# that sets the mirror iface and rule set. This is the "eyes and ears" the co-op relies on.
+#
+# INVARIANT: PASSIVE. This sensor receives on a SPAN/mirror iface and has NO interface/egress
+# toward the control VLAN. It runs unprivileged, restarts on failure, and logs locally.
+
+[Unit]
+Description=Co-op SOC-in-a-Box passive ICS sensor (span mirror, VLAN %I)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Co-op sets MIRROR_IFACE per instance override (e.g. eth1). SENSORS are passive-only.
+ExecStart=/usr/local/bin/coop-soc/sensor.sh
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure          # sensor loss auto-recovers
+RestartSec=5s
+TimeoutStartSec=60
+
+--- Least privilege / sandbox ---
+User=coopsensor
+Group=coopsensor
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelModules=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+# The sensor may need packet capture; co-op grants CAP_NET_RAW on its own cgroup but no
+# CAP_NET_ADMIN for control-VLAN routing. It must NOT have a path to write into control.
+
+[Install]
+WantedBy=multi-user.target

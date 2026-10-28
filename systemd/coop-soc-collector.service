@@ -1,0 +1,47 @@
+# systemd/coop-soc-collector.service — single-host co-op collector + log store + alerting.
+#
+# One hardened unit file that runs the sensor pipeline (Zeek/Fluent-Bit/Loki/Alertmanager) as a
+# self-healing, sandboxed, local-only service. This is the "appliance" side of the co-op box.
+#
+# INVARIANTS enforced here (checked by scripts/sec-verify.sh):
+#  - Restart=on-failure        -> sensor loss is auto-recovered (deployment-runbook §9.3)
+#  - ProtectSystem + ProtectHome + NoNewPrivs -> least privilege, read-only root
+#  - NetworkInterfaces -> only the mgmt iface; NO control-VLAN iface
+#  - No remote / no cloud (see fluent-bit + loki config)
+#
+# Co-op deploys by symlinking/enabling this + the matching sensor template per VLAN.
+
+[Unit]
+Description=Co-op SOC-in-a-Box single-host collector (local-only, passive)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Co-op fills these from the appliance build. Paths are examples.
+ExecStart=/usr/local/bin/coop-soc/entrypoint.sh
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5s
+TimeoutStartSec=60
+
+--- Least privilege / sandbox / no escalation ---
+User=coopsoc
+Group=coopsoc
+NoNewPrivileges=true       # no setuid; sensors run unprivileged where possible
+ProtectSystem=strict        # read-only /
+ProtectHome=yes
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+MemoryDenyWriteExecute=true # no writable+executable memory on the collector
+# Network: co-op may bind the collector only to the mgmt iface in the entrypoint; the
+# sensors themselves live on segmented sensor VMs (see sensor template). Default here: the
+# collector talks loopback + co-op-owned alert endpoints only.
+
+[Install]
+WantedBy=multi-user.target

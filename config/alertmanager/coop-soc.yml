@@ -1,0 +1,46 @@
+# config/alertmanager/coop-soc.yml — the "SOC-in-a-box" brain: route HIGH-confidence alerts
+# to a co-op-owned pager/SMS/email; dedup + rate-limit + escalate. A small team + a one-page
+# runbook per alert IS the SOC. Apache-2.0.
+#
+# Invariant (sec-verify check B/A): destinations are co-op ON-PREM (loopback mail relay /
+# co-op-owned SMS gateway on the local_mgmt/alert_endpoint segment). NO public cloud receiver.
+# Replace the loopback example with the co-op's own on-prem pager/gateway host.
+#
+# Pager numbers + gateway creds are NEVER in this file — Alertmanager reads them from an env
+# file outside the repo, rotated, offline-stored (sec-verify check C: no literal secrets here,
+# only loopback hosts and co-op-owned domain names).
+global:
+  resolve_timeout: 5m
+# Local co-op mail relay (on-prem; NOT a public cloud). Replace 127.0.0.1 with the co-op's
+# on-prem SMTP relay on the alert_endpoint netrange.
+  smtp_smarthost: '127.0.0.1:25'
+  smtp_from: 'coop-ops@coop.local'
+  smtp_require_tls: 'false'        # internal loopback relay; co-op enables TLS for on-prem SMTP
+
+route:
+  receiver: 'coop-pager'
+  group_by: ['alertname', 'segment']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 30m
+  routes:
+# ICS control-plane detections always go straight to the co-op owner's pager (escalate).
+  - matchers: [severity='critical']
+    receiver: 'coop-pager-critical'
+    repeat_interval: 10m
+
+receivers:
+  - name: 'coop-pager'
+    email_configs:
+      - to: 'coop-ops@coop.local'          # co-op-owned ops alias -> on-prem mail
+  - name: 'coop-pager-critical'
+    email_configs:
+      - to: 'coop-ops-critical@coop.local'
+# Optional co-op-owned SMS gateway on the alert_endpoint netrange:
+#    webhooks:
+#      - url: 'http://127.0.0.1:8066/notify'   # co-op-owned local SMS gateway (NOT a public API)
+
+inhibit_rules:
+  - source_match: severity='critical'
+    target_match: severity='warning'
+    equal: [alertname]

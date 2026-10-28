@@ -1,0 +1,50 @@
+# config/ics-sigma/ICS-Modbus-Unauthorized-Write.yml
+# Source: co-op-authored ICS Modbus write-detection sample, built on the open-source ICS
+# detection-rule community. License (DRL at build time): Apache-2.0.
+
+title: Modbus Write to Unusual Register / Function
+id: C-OT-MODBUS-0002
+status: experimental
+description: >
+  A Modbus control-plane write (function code 05/06/15/16) to a register or coil the co-op has not
+  whitelisted, or a write from a device ID outside the co-op's IED allow-list, may indicate an
+  unauthorized command path or a MITM.
+references:
+    - https://www.ics-security.org
+    - https://github.com/ISC/ICS-Security-Tools
+    - https://github.com/marlinspike             # offline replay + canary fixtures
+author: co-op SOC-in-a-Box project (InGarlicBreadWeTrust)
+license: Apache-2.0
+date: 2026-10-28
+tags:
+    - attack.command_and_control
+    - detection.ics.ot
+    - detection.unauthorized_write
+    - protocol.modbus
+logsource:
+  product: ics_sensor
+  service: ics_control
+  category: ics_control
+detection:
+  selection_write:
+      protocol: 'modbus'
+      function:
+         - 5
+         - 6
+         - 15
+         - 16
+  selection_coop_allowlist:
+      source_device_id:
+         - 1
+         - 2
+         - 3
+         - 4
+      target_register:
+         - 0
+         - 1
+         - 2
+condition: selection_write and not selection_coop_allowlist
+level: high
+# COOP FILL-IN: replace the placeholder source_device_id / target_register lists above with
+# YOUR OWN allowlist (the co-op's IED device IDs + safe writes) on first deploy.
+# If detection shows 'not selection_*' = "not matching the allowlist", add your lists here.

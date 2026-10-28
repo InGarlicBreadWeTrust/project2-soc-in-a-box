@@ -1,0 +1,24 @@
+# config/suricata/rp-soc.rules + notes — Suricata app-layer ICS signatures, PASSIVE local.
+#
+# Suricata is Apache-2.0. It runs passive on the SPAN mirror. ICS app-layer protocols
+# (modbus / dnp3 / iec61850 / enip / bacnet) decode control traffic; local rule source only.
+#
+# INvariant (sec-verify check A/B): NO cloud signatures, NO external rule download, NO remote.
+# ICS signatures are loaded from the co-op's own local rule set; no call-home.
+#
+# To enable in a co-op Suricata local rule set (e.g. /etc/suricata/local.rules):
+#   include $RULES/ics-dnp3.rules
+#   include $RULES/ics-modbus.rules
+#   include $RULES/ics-iec61850.rules
+#   include $RULES/ics-enip.rules
+#   include $RULES/ics-bacnet.rules
+#
+# ICS signature sources (community, verify current + DRL attribution) — ICS-Security-Tools
+# (DRL), Emerging Threats community rules (some under their own license; verify per-file),
+# and open62541/lib60870/libiec61850-based parsers for offline replay/canary (NOT live egress).
+#
+# >>>>>>  No remote / no cloud / no external rule feed.  Local rule tarball only.  <<<<<<
+#
+# NOTE on copyleft: Suricata (Apache-2.0), lib60870 and libiec61850 (GPL-2.0/3.0-ish; check per
+# repo SPDX). If the co-op builds a binary that links lib60870/libiec61850, that binary is GPL —
+# keep it a separate INDEPENDENT binary in its own segmented VLAN, NOT linked into co-owned code.

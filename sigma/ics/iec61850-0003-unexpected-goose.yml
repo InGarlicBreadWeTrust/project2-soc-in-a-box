@@ -1,0 +1,46 @@
+# config/ics-sigma/ICS-IEC61850-Unexpected-Goose.yml
+# Source: co-op-authored IEC 61850 GOOSE anomaly sample, built on the open-source ICS
+# detection-rule community. License (DRL at build time): Apache-2.0.
+#
+# NOTE: libiec61850 / mzl-automation/lib60870 are GPL-strong-copyleft — keep them INDEPENDENT
+# binaries in a segmented VLAN. NEVER link them into co-op-owned code.
+#
+title: IEC 61850 GOOSE Frame From Unlisted Source
+id: C-OT-IEC61850-0003
+status: experimental
+description: >
+  IEC 61850 GOOSE (Generic Object Oriented Substation Events) frames are multicast and carry the
+  inter-IED "I broke / I broke the busbar" messages in a substation. A GOOSE frame from a
+  MAC/VCID/SDI combination the co-op has not whitelisted can be a replay/injection.
+references:
+    - https://www.ics-security.org
+    - https://github.com/mzl-automation/lib60870    # INDEPENDENT binary; NOT linked into co-op code
+    - https://github.com/mzl-automation/libiec61850 # INDEPENDENT binary; NOT linked into co-op code
+author: co-op SOC-in-a-Box project (InGarlicBreadWeTrust)
+license: Apache-2.0
+date: 2026-10-28
+tags:
+    - attack.command_and_control
+    - detection.ics.ot
+    - detection.unexpected_multicast
+    - protocol.iec61850
+logsource:
+  product: ics_sensor
+  service: ics_control
+  category: ics_control
+detection:
+  selection_goose:
+      protocol: 'iec61850'
+      appid: 'GOOSE'
+  selection_allowlist:
+      src_mac:
+         - '00:11:22:33:44:55'      # co-op fills
+      vcid:
+         - '0x00000001'             # co-op fills
+      sdi:
+         - 0
+         - 1
+condition: selection_goose and not selection_allowlist
+level: high
+# COOP FILL-IN: replace the placeholder src_mac / vcid / sdi lists above with YOUR OWN
+# allowlist on first deploy.

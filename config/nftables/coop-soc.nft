@@ -1,0 +1,60 @@
+# config/nftables/coop-soc.nft — DEFAULT-DENY segmentation for the co-op SOC-in-a-box appliance.
+#
+# Topology (deployment-runbook §1.2):
+#   eth0 = VLAN 3050 "mgmt/monitor" (this appliance + co-op admin only)
+#   eth1 = PASSIVE SPAN/tap mirror of VLAN 3000 control (RX-only; no write path back to control)
+#
+# INVARIANTS this file enforces (all must hold — checked by scripts/sec-verify.sh):
+#   1. Input default-deny: only co-op admin + local mgmt may connect to the appliance.
+#   2. Output default-deny: egress only to co-op-owned alert endpoints; NO internet.
+#   3. No rule permits egress toward an ICS control write port (502/102/104/10061/10062/20000)
+#      -> no write path into the control VLAN. The mirror is RX-only; we NEVER send toward it.
+#   4. Re-assert 'drop' after every upgrade / re-load (nftables default-deny is not sticky across
+#      a kernel/module reload).
+#
+# NOTE FOR THE COOP: fill in COOP_ALLOW_* netranges below from your own IP plan. Do NOT use
+# public internet ranges. Nothing here points at any control VLAN egress.
+
+table ip coop_soc {
+
+  # ---- co-op-owned networks (fill in from the co-op's own addressing plan) -------------
+  set trusted_admin { type ipv4_addr ; flags interval ; elements = {
+    # 10.30.50.10/31       # example: co-op admin jump host / jumphost
+  } }
+  set local_mgmt { type ipv4_addr ; flags interval ; elements = {
+    10.30.50.0/24          # example: co-op mgmt+monitor segment
+  } }
+  set alert_endpoint { type ipv4_addr ; flags interval ; elements = {
+    # 10.30.50.200         # example: co-op OWN pager/SMS gateway / on-prem alert receiver
+    # 10.30.50.210         # example: on-prem SMS/Email aggregator (co-op owned, on-prem)
+  } }
+
+  # ---- input: only co-op admin + local mgmt may reach the appliance -------------------
+  chain input { type filter hook input priority 0 ; policy drop ;
+    iif "lo" accept
+    ct state v6, established, related accept
+    ip daddr @local_mgmt accept
+    ip saddr @trusted_admin accept
+    # everything else: drop (default deny)
+  }
+
+  # ---- output: egress only to co-op-owned alert endpoints; NO internet -----------------
+  chain output { type filter hook output priority 0 ; policy drop ;
+    oif "lo" accept
+    ct state established, related accept
+    # Time sync to a co-op-owned / trusted upstream NTP only (no public NTP).
+    ip daddr @local_mgmt udp dport 123 accept
+    # Pager/SMS/email egress to co-op-owned endpoints ONLY.
+    ip daddr @alert_endpoint accept
+    # >>>>>>  DELIBERATELY NO RULE SENDS TOWARD VLAN 3000 / any ICS control port  <<<<<<<
+    # (The mirror eth1 is RX-only; there is no egress path to control by design.)
+  }
+
+  # ---- forward: this appliance does NOT route between segments (VyOS does routing) -----
+  chain forward { type filter hook forward priority 0 ; policy drop ;
+    # Intentionally empty + default drop. If VyOS is used as the L2/L3 router
+    # (vyos/vyos-1x, LGPL — verify the tree), keep VyOS default-deny inter-VLAN and permit
+    # ONLY a SPAN-mirror RX toward this monitor segment. No VLAN here has a write path to 3000.
+  }
+
+}
