@@ -1,0 +1,30 @@
+repo,class,license_dcted,github_spdx,pushed_at,stars,archived,role,risk_note,ref_snapshot_json
+projectcalico/calico,P,apache-2.0-detected,hint_may_be_gpl3,2026-10-28,active,no,calico-vlan-segmentation,"CISA ICS-CERT uses Calico; confirm license tree — historical project is GPL-3.0; GitHub SPDX may misreport",r1.json
+vyos/vyos-1x,L,lgpl-2.1-detected,lgpl-2.1,2026-10-28,1958,no,vyos-segmentation-appliance,"LGPL-2.1 detected but VyOS historically ships GPL-3.0 firmware; verify LICENSE file before deploy",r2.json
+grafana/loki,A,agpl-3.0,agpl-3.0,2026-10-28,24359,no,log-store,AGPL-3.0: fine internal; do not offer a modified networked service to 3rd parties,r3.json
+fluent/fluent-bit,P,apache-2.0,apache-2.0,2026-10-28,24422,no,primary-collector,Permissive: ship first; no external @out by default,r4.json
+wazuh/wazuh,G,gpl-3.0-project,noassertion,2026-10-27,25862,no,optional-siem,"GitHub SPDX = NOASSERTION (misleading); project license is GPL-3.0; standalone only; disable default cloud index-server + telemetry",r5.json
+oisf/suricata,G,gpl-2.0,gpl-2.0,2026-10-27,17177,no,network-nids,GPL-2.0: standalone only; supports modbus/dnp3 app-layer parsing,r6.json
+prometheus/alertmanager,P,apache-2.0,apache-2.0,2026-10-28,1605,no,alert-routing,Permissive: the SOC-in-a-box brain; route to co-op pager,r8.json
+grafana/alerting,A,agpl-3.0,agpl-3.0,2026-10-28,1928,no,grafana-native-alerting,AGPL-3.0: fine internal,r9.json
+grafana/grafana,A,agpl-3.0,agpl-3.0,2026-10-28,66014,no,dashboards,"AGPL-3.0: internal use is fine; do not offer a modified networked service publicly",r10.json
+grafana/alloy,P,apache-2.0,apache-2.0,2026-10-28,3650,no,collector-v2,Replaces EOL Grafana Promtail; permissive,r13.json
+fluent/fluentd,P,apache-2.0,apache-2.0,2026-10-27,11978,no,heavy-collector,Permissive but heavy (Ruby); prefer Fluent Bit for co-op scale,r14.json
+open-telemetry/opentelemetry-collector,P,apache-2.0,apache-2.0,2026-10-28,30480,no,otel-collector,Permissive; vendor-neutral; local only; no remote_write,r15.json
+zeek/zeek,P,bstd-3-historical,noassertion,2026-10-28,3420,no,network-NSM,"Verify current SPDX — historically BSD-3; strong ICS scripts (DNP3/Modbus/IEC)",r16.json
+OpenSCAP/openscap,L,lgpl-2.1,lgpl-2.1,2026-10-27,1042,no,scap-enforcement,LGPL: fine as a called tool; run CISA/NIST benchmarks,r18.json
+ComplianceAsCode/content,?,noassertion-mixed,noassertion,2026-10-27,2830,no,scap-benchmark-source,"NOASSERTION mixed (was scap-security-guide); OK to read, not to link; verify per-profile license",r25.json
+open62541/open62541,P,repo-mpl-2.0-core-bstd-3,mpl-2.0,2026-10-28,3261,no,opc-ua-sensor,"MPL-2.0 at repo (file-level weak copyleft), core C documented as BSD-3-Clause; permissive-compatible; verify LICENSE file",r26.json
+dnp3/opendnp3,D,apache-2.0,apache-2.0,2022-05-18,336,yes,dnp3-parser,"ARCHIVED 2022 — not maintained upstream; use co-op stewardship fork coop-arm-dnp3-steward",r20.json
+stephane/libmodbus,L,lgpl-2.1,lgpl-2.1,2026-07-02,4278,no,modbus-parser,LGPL weak-copyleft: fine as called lib; single-maintainer bus factor,r21.json
+tailscale/tailscale,P,bstd-3,bstd-3,2026-10-27,38211,no,mgmt-overlay,"Permissive BUT default relay/coordination goes through Tailscale cloud; use free tier for co-op mgmt only, never for ICS telemetry",r23.json
+mz-automation/lib60870,G,gpl-3.0,gpl-3.0,2026-08-31,601,no,iec-60870-pc-parser,"GPL-3.0: standalone only; active; do not link into co-op code",r29.json
+mz-automation/libiec61850,G,gpl-3.0,gpl-3.0,2026-10-21,1237,no,iec-61850-pc-parser,"GPL-3.0: standalone only; active; same author as lib60870",r30.json
+ITI/ICS-Security-Tools,P,cc-by-4.0,cc-by-4.0,2025-04-15,2074,no,ics-signature-pack,"Permissive but last push ~18 months ago; verify sub-pack licenses (RAPSN SETs are MPL-2.0)",r33.json
+prometheus/prometheus,P,apache-2.0,apache-2.0,2026-10-28,66826,no,metrics-scrape,Permissive; no remote_write,r34.json
+SigmaHQ/sigma,P,detection-rule-license-1.1,permissive-dRL,active,unknown,no,sigma-rules,"Repo org was SigHQ - renamed SigmaHQ (explains earlier 404); DRL-1.1 MIT-based, attribution in match output required, permissive-good",search-note
+grafana/promtail,D,agpl-3.0,agpl-3.0,~2026-03,unknown,yes,collector-EOL,DO NOT DEPLOY; superseded by grafana/alloy (Apache-2.0), r7404
+dnp3-pcap/nidds,?,unverified-404,unknown,not-fetched,unknown,unknown,DNP3-ND-parsing,Verify correct repo name before use,ref-only
+cisa/CSET,?,unverified-404,unknown,not-fetched,unknown,unknown,cisa-cyber-eval-tool,Verify correct repo name; not in default deploy path,ref-only
+cisa/malcolm,?,unverified-404,unknown,not-fetched,unknown,unknown,cisa-network-parsing,Verify correct repo name; not in default deploy path,ref-only
+golang-headscale/headscale,?,unverified-404,unknown,not-fetched,unknown,unknown,self-hosted-tailscale-coord,Verify correct repo name; optional for co-op,ref-only

@@ -1,0 +1,10 @@
+# OS / editor
+.DS_Store
+*~
+*.swp
+.idea/
+.vscode/
+# local build artifacts (deployed co-op configs, etc.)
+*.log
+build/
+node_modules/

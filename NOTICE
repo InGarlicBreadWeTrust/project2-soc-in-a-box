@@ -1,0 +1,19 @@
+Co-op SOC-in-a-Box (Project #2)
+Copyright 2026 InGarlicBreadWeTrust
+
+This notice applies to the co-op-authored documentation and manifests in this
+repository (README.md, components-manifest.md, security-assessment.md,
+deployment-runbook.md, legal-notes.md, and the verify/ reproducibility data).
+
+License of this documentation:
+  Creative Commons Attribution 4.0 International (CC-BY-4.0)
+  See LICENSE (legalcode) for full terms.
+
+Suggested license for a co-op's own glue code, configuration, and runbooks that
+build on this scaffold:
+  Apache License 2.0 (patent grant + NOTICE field) — see legal-notes.md.
+
+No secrets, credentials, telemetry, or call-home exist anywhere in this tree.
+The verify/ subdirectory contains only GitHub API metadata snapshots
+(SPDX license id, pushed_at, archived, star counts) used to verify component
+aliveness; it contains no source code and no secrets.
