@@ -32,4 +32,12 @@ document, not as live security tooling.
 No secrets, credentials, or telemetry are present — this is also a guarantee a
 co-op can audit. Flag any path that violates that.
 
-<!-- TODO(maintainer): fill in a real disclosure channel here. -->
+## Contact
+
+- Open a new **draft issue** in this repo and label it `security` — GitHub
+  notifies the owner (`@InGarlicBreadWeTrust`) immediately.
+- Or contact the owner directly via the GitHub Contact-owner interface at
+  `https://github.com/InGarlicBreadWeTrust` (also in the "About" sidebar).
+- PGP key: not published yet. Send reports in clear text via a draft issue;
+  for encrypted contact, request the key in your first message and we will
+  respond out-of-band.
