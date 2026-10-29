@@ -3,7 +3,11 @@
 
 **Status:** First-draft scaffold (research + verified component manifest). Not yet deployed.
 **Audience:** rural power/utility co-operatives and small independent operators that must run *some* ICS/OT monitoring but cannot staff a 24x7 SOC and cannot afford commercial Nozomi/Claroty/Armis/ExodusGuard subscriptions.
-**Direction/charter:** defensive hardening & grid resilience. **Goal: "help not get sued."** Only permissive-licensed OSS is preferred; everything flagged in this doc is flagged for a reason.
+**Direction/charter:** defensive hardening & grid resilience. **Goal: a legally clean,
+no-telemetry, defensible posture.** Only permissive-licensed OSS is preferred; everything
+flagged in this doc is flagged so a co-op can choose deliberately. This scaffold is a research
+reference and not legal advice; a co-op should confirm its regulatory posture (e.g. NERC CIP)
+and licensing decisions with local counsel before production deployment.
 **License of *this* document/scaffold:** CC-BY-4.0 (our own work product). Suggested license for the co-op's own glue code/config: **Apache-2.0** (see `legal-notes.md`).
 
 > No secrets, no credentials, no telemetry, no call-home anywhere in this tree.
@@ -30,7 +34,7 @@ Everything else is a documented alternative.
 1. **Permissive-first licensing.** Apache-2.0 / MIT / BSD / MPL-2.0 / CC-BY / Detection Rule
    License are **preferred**. Strong copyleft (GPL) and AGPL are *allowed but flagged* and are
    deployed only as independent binaries in a network segment, never linked into co-op code.
-   See `legal-notes.md` for the full "won't get sued" analysis.
+   See `legal-notes.md` for the full legal-posture guidance.
 2. **No PII, no call-home, no telemetry.** ICS/OT telemetry is *operational* data (breaker
    state, DER output, setpoints) — not human PII but legally/operationally sensitive. Nothing
    in this stack phones home by default. Every component with a default cloud path
@@ -111,7 +115,7 @@ compromised appliance from being a path *into* the control network.
 
 ## 4. Recommended minimal set (what a co-op actually ships)
 
-For "help not get sued" with minimal operation: `nftables/VLAN` + `Zeek` + `Suricata` +
+For a minimal, legally clean deployment with low operational overhead: `nftables/VLAN` + `Zeek` + `Suricata` +
 `ITI/ICS-Security-Tools` signatures + `Fluent Bit -> Loki` + `Alertmanager -> pager` +
 `OpenSCAP`, plus one ICS parser (`opendnp3` stewardship fork **if the co-op runs DNP3**,
 `libmodbus` if Modbus-TCP, `libIEC61850`/`lib60870` if the co-op has those).
@@ -132,7 +136,7 @@ last-push date, permissiveness class, and per-component risks.
 | `components-manifest.md` | Every candidate component → verified license + aliveness + permissiveness class + risk |
 | `security-assessment.md` | Threat model, privacy assessment, legal/copyright/NERC-CIP analysis |
 | `deployment-runbook.md` | Single-host provisioning, VLAN/SPAN, per-tier bring-up + validation |
-| `legal-notes.md` | Copyleft/AGPL/"won't get sued" checklist + suggested licenses for co-op work |
+| `legal-notes.md` | Copyleft/AGPL/licensing checklist + suggested licenses for co-op work |
 | `verify/` | Raw GitHub API snapshots (`r*.json`), `manifest.csv`, `reverify.sh`, `README.md` |
 
 ---

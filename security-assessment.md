@@ -1,7 +1,7 @@
 # Security, Privacy & Legal Assessment — Co-op SOC-in-a-Box
 
 Companion to `README.md` and `components-manifest.md`. Scope: **defensive direction only**,
-goal = "help the co-op not get sued / not get breached." No offensive capability anywhere in this
+goal = to keep a co-op legally clean and out of an actual breach. No offensive capability anywhere in this
 design; the appliance mirrors and *never* drives control traffic.
 
 ---
@@ -71,7 +71,7 @@ URL, any S3/HTTP endpoint, any `remote_write`, any `@out http`, and disable it.
 
 ---
 
-## 3. Legal / copyright assessment (the "help not get sued" core)
+## 3. Legal / copyright assessment (the legal-posture core)
 
 ### 3.1 Co-op's actual legal posture
 - **NERC CIP** likely **does not apply** to a small rural co-op **unless** it operates
@@ -87,7 +87,7 @@ URL, any S3/HTTP endpoint, any `remote_write`, any `@out http`, and disable it.
 - **Modbus/OPC-UA/DNP3 protocols themselves** are not copyrighted; parsing them is fine.
 
 ### 3.2 Copyleft map and what it obligates the co-op
-| Class | Components | Obligation | Risk to "not get sued" |
+| Class | Components | Obligation | Exposure |
 |---|---|---|---|
 | **Fully permissive** (P): Apache/MIT/BSD/MPL/CC/DRL | Fluent Bit, Alloy, OTel, Prometheus, Alertmanager, Tailscale, open62541, libmodbus(L), Sigma(DRL), ICS-Security-Tools, RAPSN SETs(MPL) | **None** beyond attribution (DRL requires attribution + match-output notice — trivially met). | **Low.** Use freely, even link into co-op code. |
 | **Weak copyleft** (L): LGPL-2.1 | libmodbus, VyOS(? verify), OpenSCAP | Call the library; **do not** redistribute a *modified* LGPL binary as proprietary. | **Low.** Fine for co-op. |

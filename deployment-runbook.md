@@ -146,7 +146,7 @@ Each parser: `systemd` `Restart=on-failure`, write to a local file/socket, no ex
 7. **Document the config as a signed artifact** and store it in the co-op's repo (no secrets —
    pager numbers and SSH keys are stored separately, offline, rotated).
 
-## 10. Operating the co-op (not 24x7 SOC, just "help not get sued")
+## 10. Operating the co-op (a minimal, defensible posture — not a 24x7 SOC)
 - **High-confidence alert only** to pager. Noise is filtered at Alertmanager by severity +
    dedup.
 - **Runbook** per alert: one page, "if alert X, do Y." A co-op admin can act in ~15 min.

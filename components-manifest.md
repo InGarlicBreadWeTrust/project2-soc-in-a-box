@@ -7,7 +7,7 @@ Verification source: GitHub REST API, `coop-soc-scout/1.0`, 2026-10-28 UTC. Raw 
 `verify/r*.json`, machine-readable flattened in `verify/manifest.csv`, reproducable via
 `verify/reverify.sh`.
 
-### Legit license-classes (co-op "won't get sued" lens)
+### Legit license-classes (co-op permissiveness lens)
 - **P = fully permissive** (MIT / Apache-2.0 / BSD / MPL-2.0 / CC / Detection-Rule-Lic): no
   copyleft exposure. **Preferred.**
 - **L = weak copyleft** (LGPL-2.1/3.0): safe to call as a shared library from co-op code; do not

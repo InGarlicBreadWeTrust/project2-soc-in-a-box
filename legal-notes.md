@@ -1,4 +1,4 @@
-# Legal Notes — "Help Not Get Sued" Checklist
+# Legal Notes — Licensing & Posture Checklist
 
 Companion to `security-assessment.md`. This doc is the **plain-language legal posture** for a
 rural co-op adopting an open-source ICS/OT SOC-in-a-box. **Not legal advice**; confirm with
@@ -39,7 +39,7 @@ co-op counsel. Snapshot: 2026-10-28.
 - [ ] No component auto-updates or phones home on startup.
 - [ ] Egress is `nft` default-deny except co-op-owned alert endpoints.
 
-## 4. "Help not get sued" — the co-op's 10 rules
+## 4. Legal posture — the co-op's 10 rules
 1. **No PII, no call-home, no telemetry.** If you can name the URL a component reaches out
    to, **block it** or keep it co-op-owned.
 2. **Segment control from monitor.** No appliance has a *write* path to the control VLAN.
